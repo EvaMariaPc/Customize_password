@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Password Generator</title>
+    <style>
+        body {
+            background-color: pink;
+            color: blue;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin: 5px;
+            width: calc(100% - 20px);
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: darkblue;
+        }
+        #password {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Personalized Password Generator</h1>
+        <form action="">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br>
+            <label for="birth_year">Birth Year:</label><br>
+            <input type="number" id="birth_year" name="birth_year" min="1900" max="2024" required><br>
+            <label for="favorite_color">Favorite Color:</label><br>
+            <input type="text" id="favorite_color" name="favorite_color" required><br>
+            <label for="pet_name">Pet Name:</label><br>
+            <input type="text" id="pet_name" name="pet_name" required><br>
+            <label for="lucky_number">Lucky Number:</label><br>
+            <input type="number" id="lucky_number" name="lucky_number" required><br>
+            <label for="favorite_food">Favorite Food:</label><br>
+            <input type="text" id="favorite_food" name="favorite_food" required><br>
+            <label for="favorite_hobby">Favorite Hobby:</label><br>
+            <input type="text" id="favorite_hobby" name="favorite_hobby" required><br>
+            <input type="submit" value="Generate Password">
+        </form>
+        <div id="password"></div>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Retrieve form values
+            var name = document.getElementById('name').value;
+            var birth_year = document.getElementById('birth_year').value;
+            var favorite_color = document.getElementById('favorite_color').value;
+            var pet_name = document.getElementById('pet_name').value;
+            var lucky_number = document.getElementById('lucky_number').value;
+            var favorite_food = document.getElementById('favorite_food').value;
+            var favorite_hobby = document.getElementById('favorite_hobby').value;
+
+            // AJAX request to Python script for password generation
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'http://localhost:5000/generate_password?name=' + name +
+                    '&birth_year=' + birth_year +
+                    '&favorite_color=' + favorite_color +
+                    '&pet_name=' + pet_name +
+                    '&lucky_number=' + lucky_number +
+                    '&favorite_food=' + favorite_food +
+                    '&favorite_hobby=' + favorite_hobby, true);
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    // Success!
+                    var password = xhr.responseText;
+                    document.getElementById('password').innerText = "Your personalized password is: " + password;
+                } else {
+                    // We reached our target server, but it returned an error
+                    console.error('Server error!');
+                }
+            };
+            xhr.onerror = function() {
+                // There was a connection error of some sort
+                console.error('Connection error!');
+            };
+            xhr.send();
+        });
+    </script>
+</body>
+</html>
